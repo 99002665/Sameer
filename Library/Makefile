@@ -1,9 +1,62 @@
-all:all.out
-all.out: operations.o library_test.o
-	g++ $^ -o $@ -lgtest -lgtest_main -lpthread
-%.o:%.cpp
-	g++ $< -c
-clean:	
-	rm -rf *.o *.out
-run:all.out	
-	./all.out
+# Name of the project
+PROJECT_NAME = Library
+# Output directory
+BUILD = build
+
+# All source code files
+SRC = main.cpp\
+src/book.cpp\
+
+# All test source files
+TEST_SRC = src/book.c \
+test/library_test.c
+TEST_OUTPUT = $(BUILD)/Test_$(PROJECT_NAME).out
+
+# All source code files
+SRC = main.cpp\
+src/operations.cpp\
+
+# All test source files
+TEST_SRC = src/operations.c \
+test/library_test.c
+TEST_OUTPUT = $(BUILD)/Test_$(PROJECT_NAME).out
+
+
+# All include folders with header files
+INC	= -Iinc
+
+PROJECT_OUTPUT = $(BUILD)/$(PROJECT_NAME).out
+
+# Document files
+DOCUMENTATION_OUTPUT = documentation/html
+
+# Default target built
+$(PROJECT_NAME):all
+
+# Run the target even if the matching name exists
+.PHONY: run clean test  doc all
+
+all: $(SRC) $(BUILD)
+	gcc $(SRC) $(INC) -o $(PROJECT_OUTPUT).out
+
+# Call `make run` to run the application
+run:$(PROJECT_NAME)
+	./$(PROJECT_OUTPUT).out
+
+# Document the code using Doxygen
+doc:
+	make -C ./documentation
+
+# Build and run the unit tests
+test:$(BUILD)
+	gcc $(TEST_SRC) $(INC) -o $(TEST_OUTPUT) -lcunit
+	./$(TEST_OUTPUT)
+
+# Remove all the built files, invoke by `make clean`
+clean:
+	rm -rf $(BUILD) $(DOCUMENTATION_OUTPUT)
+
+# Create new build folder if not present
+$(BUILD):
+	mkdir build
+
